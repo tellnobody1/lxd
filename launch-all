@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export cts=(az0 az1 az2 az3 az4 az5 az6 az7 az8 az9)
+
+for c in ${cts[@]}; do
+    lxc $1 $c;
+    #lxc exec $c -- /home/ubuntu/apps/mws-core/start.sh
+done

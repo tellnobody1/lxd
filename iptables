@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# forward websocket port for karaf 4810
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 4810 -j DNAT --to-destination 10.0.3.194:4810
+sudo iptables -A FORWARD -i eth0 -p tcp --dport 4810 -j ACCEPT
+sudo iptables-save
+sudo iptables -nL --line-numbers

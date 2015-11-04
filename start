@@ -1,0 +1,10 @@
+#! /bin/bash
+
+MWS_OPTS="-J-Xmx512M -J-Xms128M \
+  -XX:-MaxFDLimit \
+  -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=128M \
+  -Dcom.sun.management.jmxremote.port=9999 \
+  -Dcom.sun.management.jmxremote.ssl=false \
+  -Dcom.sun.management.jmxremote.authenticate=false"
+
+nohup ./bin/core $MWS_OPTS -Dconf=/home/ubuntu/apps/mws-core/conf/ext.conf > /dev/null 2>&1 &

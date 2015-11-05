@@ -2,6 +2,7 @@
 
 SELF=`basename $0`
 MWS_HOME=/home/ubuntu/apps/mws-core
+CTL_HOME="$(cd "$(cd "$(dirname "$0")"; pwd -P)"; pwd)"
 
 function init(){
   echo "init $1"
@@ -18,8 +19,8 @@ function start(){
 }
 
 function ip(){
-  echo "Looking for $1"
-  lxc info $1 | grep "eth0:" | awk '{print $3}'
+  local lip=$(lxc info $1 | grep "eth0:" | awk '{print $3}')
+  echo "$lip"
   #lxc list | awk -v n1=$1 'NR>2 && $2==n1 && $4=="RUNNING" {print $6}'
 }
 
@@ -31,14 +32,30 @@ function forward(){
   echo "sudo iptables -nL --line-numbers"
 }
 
-function a() {
-  echo "A"
+function jmx() {
+  java -jar $CTL_HOME/jmxsh-R5.jar -h `ip $1` -p 9999 /dev/fd/0
+}
+
+function invoke() {
+  echo jmx_invoke -m akka:type=Cluster "$@" | $JMX_CLIENT
+}
+
+function get() {
+  echo "puts [jmx_get -m akka:type=Cluster \"$1\"]" | jmx $2
+}
+
+function ensure() {
+  REPLY=$(get Available $1) # redirects STDERR to STDOUT before capturing it
+  if [[ "$REPLY" != *true ]]; then
+    echo "MWS cluster node is not available on $1"
+    exit 1
+  fi
 }
 
 case "$1" in
   mws)
     if [ $# -ne 3 ]; then 
-      echo "Usage: $SELF mws init <node>"
+      echo "Usage: $SELF mws <command> <node>"
       exit 1
     fi
     shift 1
@@ -48,6 +65,11 @@ case "$1" in
         ;;
       start)
         start $2
+        ;;
+      status)
+        ensure $2
+        echo "Querying cluster status $2"
+        get ClusterStatus $2
         ;;
       *)
       echo "unknow command"
@@ -88,6 +110,7 @@ case "$1" in
       exit 1
     fi
     ;;
+
   a)
     a
     ;;
@@ -103,7 +126,8 @@ case "$1" in
     printf "OGW:\n"
     printf "MWS AS:\n"
     printf "\t%s - %s\n" "mws init <container>" "Init MWS on container. Push start script and configuration."
-    printf "\t%s - %s\n" "mws start <container>" "Init MWS on container. Push start script and configuration."
+    printf "\t%s - %s\n" "mws start <container>" "Start MWS Application on container."
+    printf "\t%s - %s\n" "mws status <container>" "Asks the MWS cluster for its current status on container."
     printf "\n"
     printf "Examples:\n"
     printf "\t"

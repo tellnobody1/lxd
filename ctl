@@ -93,6 +93,28 @@ case "$1" in
   list)
     echo "`lxc list`"
     ;;
+  start)
+    if [ $# -ne 2 ]; then
+      echo "Usage: $SELF start <name>|all"
+      exit 1
+    fi
+    case "$2" in
+      all)
+        echo "Start all containers..."
+        cts=(`lxc list | awk 'NR>2 && $4=="STOPPED" {print $2}'`)
+        for n in ${cts[@]}; do lxc start $n; done
+        lxc list
+        echo "done!"
+        ;;
+      *)
+        name=$2
+        echo "Starting" $name
+        lxc start $name
+        echo "done!"
+        lxc list
+        ;;
+    esac
+    ;;
   stop)
     if [ $# -ne 2 ]; then
       echo "Usage: $SELF stop <name>"
@@ -120,6 +142,7 @@ case "$1" in
     printf "LXD:\n"
     printf "\t%s - %s\n" list "Output LXD containers list."
     printf "\t%s - %s\n" "stop <name>" "Stop container by name."
+    printf "\t%s - %s\n" "start <name>|all" "Start [container by name] | [all containers]."
     printf "\t%s - %s\n" "forward <port> <IP>" "Forward port to container IP."
     printf "Containers:\n"
     printf "\t%s - %s\n" "ip <name>" "Returns the container IP by name."

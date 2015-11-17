@@ -7,4 +7,4 @@ MWS_OPTS="-J-Xmx512M -J-Xms128M \
   -Dcom.sun.management.jmxremote.ssl=false \
   -Dcom.sun.management.jmxremote.authenticate=false"
 
-nohup ./bin/core $MWS_OPTS -Dconf=/home/ubuntu/apps/mws-core/conf/ext.conf > /dev/null 2>&1 &
+nohup ./bin/core $MWS_OPTS -Dconf=/home/ubuntu/prj/mwss/conf/ext.conf > /dev/null 2>&1 &

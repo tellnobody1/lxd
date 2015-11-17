@@ -1,7 +1,7 @@
 #! /bin/bash
 
 SELF=`basename $0`
-MWS_HOME=/home/ubuntu/apps/mws-core
+MWS_HOME=/home/ubuntu/prj/mwss
 CTL_HOME="$(cd "$(cd "$(dirname "$0")"; pwd -P)"; pwd)"
 
 function init(){
@@ -160,3 +160,19 @@ case "$1" in
   ;;
 esac
 
+# lxc exec az0 -- sudo apt-get install openjdk-7-jdk
+
+# OGW
+# lxc file push ~/.ssh/id_rsa.pub test1/home/ubuntu/.ssh/authorized_keys --mode=0600 --uid=1000
+# lxc exec az0 -- tar -xf /home/ubuntu/prj/mwskaraf.tar.gz -C /home/ubuntu/prj
+# lxc file push 2015-11-17T13:13:45Z.kar az0/home/ubuntu/prj/mwskaraf-15.7.15.4-10-gaa403a0/deploy/ogp.kar
+# lxc file push 2015-11-17T13:43:04Z.kar az0/home/ubuntu/prj/mwskaraf-15.7.15.4-10-gaa403a0/deploy/mws.kar
+# wget http://gitlab.ee.playtech.corp/mws/kar/raw/master/fragments/extdev1.kar
+
+# sudo ln -s /home/ubuntu/prj/karaf/bin/KARAF-service /etc/init.d/
+# 
+
+# MWSS
+# tar -cvzf mwss.tar.gz mwss
+# lxc file push mwss.tar.gz az0/home/ubuntu/prj/
+# lxc exec az0 -- tar -xf /home/ubuntu/prj/mwss.tar.gz -C /home/ubuntu/prj
